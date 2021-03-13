@@ -1,0 +1,28 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1.4.4
+        with:
+          node-version: '14.x'
+      - name: Install dependencies
+        run: cd lambda && npm install
+      - name: Archive Release
+        uses: thedoctor0/zip-release@master
+        with:
+          directory: lambda
+          filename: lambda.zip
+      - name: Upload Release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: lambda.zip
+          token: ${{ secrets.GITHUB_TOKEN }}
